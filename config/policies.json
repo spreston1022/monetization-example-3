@@ -1,3 +1,55 @@
 {
-  "policies": []
+  "policies": [
+    {
+      "name": "api-key-auth-inbound",
+      "policyType": "api-key-inbound",
+      "handler": {
+        "export": "ApiKeyInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "allowUnauthenticatedRequests": false,
+          "cacheTtlSeconds": 60
+        }
+      }
+    },
+    {
+      "name": "posts-entitlement-inbound",
+      "policyType": "custom-code-inbound",
+      "handler": {
+        "export": "default",
+        "module": "$import(./modules/plan-entitlement)",
+        "options": {
+          "api": "posts"
+        }
+      }
+    },
+    {
+      "name": "users-entitlement-inbound",
+      "policyType": "custom-code-inbound",
+      "handler": {
+        "export": "default",
+        "module": "$import(./modules/plan-entitlement)",
+        "options": {
+          "api": "users"
+        }
+      }
+    },
+    {
+      "name": "rate-limit-by-plan-inbound",
+      "policyType": "rate-limit-inbound",
+      "handler": {
+        "export": "RateLimitInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "rateLimitBy": "function",
+          "requestsAllowed": 10,
+          "timeWindowMinutes": 1,
+          "identifier": {
+            "export": "default",
+            "module": "$import(./modules/rate-limit-by-plan)"
+          }
+        }
+      }
+    }
+  ]
 }

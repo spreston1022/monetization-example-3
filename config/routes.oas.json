@@ -2,7 +2,63 @@
   "openapi": "3.1.0",
   "info": {
     "version": "1.0.0",
-    "title": "My Zuplo API"
+    "title": "Monetization Example Gateway",
+    "description": "A minimal example of a monetized API gateway with three plans (bronze, silver, gold), each with its own rate limit. The gold plan bundles two APIs (Posts + Users); bronze and silver each get exactly one."
   },
-  "paths": {}
+  "paths": {
+    "/v1/posts": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "get": {
+        "summary": "List posts",
+        "description": "Posts API. Included in the bronze and gold plans.",
+        "operationId": "list-posts",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlRewriteHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "rewritePattern": "https://jsonplaceholder.typicode.com/posts"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "api-key-auth-inbound",
+              "posts-entitlement-inbound",
+              "rate-limit-by-plan-inbound"
+            ]
+          }
+        }
+      }
+    },
+    "/v1/users": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "get": {
+        "summary": "List users",
+        "description": "Users API. Included in the silver and gold plans.",
+        "operationId": "list-users",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlRewriteHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "rewritePattern": "https://jsonplaceholder.typicode.com/users"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "api-key-auth-inbound",
+              "users-entitlement-inbound",
+              "rate-limit-by-plan-inbound"
+            ]
+          }
+        }
+      }
+    }
+  }
 }
