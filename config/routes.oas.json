@@ -3,7 +3,7 @@
   "info": {
     "version": "1.0.0",
     "title": "Monetization Example Gateway",
-    "description": "A minimal example of a monetized API gateway with three plans (bronze, silver, gold), each with its own rate limit. The gold plan bundles two APIs (Posts + Users); bronze and silver each get exactly one."
+    "description": "A minimal example of a monetized API gateway built on Zuplo's Monetization feature. Three plans (bronze, silver, gold), each with its own gateway rate limit. The gold plan bundles two APIs (Posts + Users); bronze and silver each get exactly one, enforced via requiredEntitlements on the monetization policy."
   },
   "paths": {
     "/v1/posts": {
@@ -12,7 +12,7 @@
       },
       "get": {
         "summary": "List posts",
-        "description": "Posts API. Included in the bronze and gold plans.",
+        "description": "Posts API. Requires the 'posts_requests' entitlement (included in the bronze and gold plans).",
         "operationId": "list-posts",
         "x-zuplo-route": {
           "corsPolicy": "none",
@@ -24,11 +24,7 @@
             }
           },
           "policies": {
-            "inbound": [
-              "api-key-auth-inbound",
-              "posts-entitlement-inbound",
-              "rate-limit-by-plan-inbound"
-            ]
+            "inbound": ["monetization-posts-inbound", "rate-limit-by-plan-inbound"]
           }
         }
       }
@@ -39,7 +35,7 @@
       },
       "get": {
         "summary": "List users",
-        "description": "Users API. Included in the silver and gold plans.",
+        "description": "Users API. Requires the 'users_requests' entitlement (included in the silver and gold plans).",
         "operationId": "list-users",
         "x-zuplo-route": {
           "corsPolicy": "none",
@@ -51,11 +47,7 @@
             }
           },
           "policies": {
-            "inbound": [
-              "api-key-auth-inbound",
-              "users-entitlement-inbound",
-              "rate-limit-by-plan-inbound"
-            ]
+            "inbound": ["monetization-users-inbound", "rate-limit-by-plan-inbound"]
           }
         }
       }

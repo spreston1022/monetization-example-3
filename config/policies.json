@@ -1,36 +1,32 @@
 {
   "policies": [
     {
-      "name": "api-key-auth-inbound",
-      "policyType": "api-key-inbound",
+      "name": "monetization-posts-inbound",
+      "policyType": "monetization-inbound",
       "handler": {
-        "export": "ApiKeyInboundPolicy",
+        "export": "MonetizationInboundPolicy",
         "module": "$import(@zuplo/runtime)",
         "options": {
-          "allowUnauthenticatedRequests": false,
-          "cacheTtlSeconds": 60
+          "cacheTtlSeconds": 60,
+          "meters": {
+            "posts_requests": 1
+          },
+          "requiredEntitlements": ["posts_requests"]
         }
       }
     },
     {
-      "name": "posts-entitlement-inbound",
-      "policyType": "custom-code-inbound",
+      "name": "monetization-users-inbound",
+      "policyType": "monetization-inbound",
       "handler": {
-        "export": "default",
-        "module": "$import(./modules/plan-entitlement)",
+        "export": "MonetizationInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
         "options": {
-          "api": "posts"
-        }
-      }
-    },
-    {
-      "name": "users-entitlement-inbound",
-      "policyType": "custom-code-inbound",
-      "handler": {
-        "export": "default",
-        "module": "$import(./modules/plan-entitlement)",
-        "options": {
-          "api": "users"
+          "cacheTtlSeconds": 60,
+          "meters": {
+            "users_requests": 1
+          },
+          "requiredEntitlements": ["users_requests"]
         }
       }
     },

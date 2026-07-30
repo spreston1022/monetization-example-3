@@ -1,33 +1,27 @@
 /**
- * Single source of truth for the three plans in this example gateway.
+ * Gateway-layer rate limits for each plan configured in the Monetization
+ * service (Services -> Monetization -> Plans in the Zuplo Portal).
  *
- * - bronze: access to the Posts API only
- * - silver: access to the Users API only
- * - gold:   bundles BOTH the Posts API and the Users API
+ * Which APIs a plan can call is NOT decided here - that's declared on the
+ * plan itself in the Monetization service (via the entitlements/features
+ * attached to it) and enforced by `requiredEntitlements` on the
+ * monetization-inbound policy in config/policies.json. This file only
+ * covers the per-second/per-minute spike-protection limit layered on top,
+ * since Monetization's usage quotas are monthly, not per-minute.
  *
- * Each plan also gets its own rate limit, enforced by
- * modules/rate-limit-by-plan.ts.
+ * Plan keys here must match the plan `key` values you create in the
+ * Monetization service.
  */
 
-export type ApiName = "posts" | "users";
-export type PlanName = "bronze" | "silver" | "gold";
-
-export interface PlanConfig {
-  apis: ApiName[];
+export interface RateLimit {
   requestsAllowed: number;
   timeWindowMinutes: number;
 }
 
-export const PLANS: Record<PlanName, PlanConfig> = {
-  bronze: { apis: ["posts"], requestsAllowed: 10, timeWindowMinutes: 1 },
-  silver: { apis: ["users"], requestsAllowed: 20, timeWindowMinutes: 1 },
-  gold: {
-    apis: ["posts", "users"],
-    requestsAllowed: 50,
-    timeWindowMinutes: 1,
-  },
+export const PLAN_RATE_LIMITS: Record<string, RateLimit> = {
+  bronze: { requestsAllowed: 10, timeWindowMinutes: 1 },
+  silver: { requestsAllowed: 20, timeWindowMinutes: 1 },
+  gold: { requestsAllowed: 50, timeWindowMinutes: 1 },
 };
 
-export interface ConsumerMetadata {
-  plan?: PlanName;
-}
+export const DEFAULT_RATE_LIMIT: RateLimit = PLAN_RATE_LIMITS.bronze;
