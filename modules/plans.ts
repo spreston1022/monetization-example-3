@@ -10,7 +10,14 @@
  * since Monetization's usage quotas are monthly, not per-minute.
  *
  * Plan keys here must match the plan `key` values you create in the
- * Monetization service.
+ * Monetization service. Note: a plan's `key` is locked once the plan is
+ * published, so these map to whatever key each plan was actually created
+ * with, not necessarily its display `name`.
+ *
+ *   key            -> name (display)
+ *   fixed_quota    -> bronze
+ *   fixed_quota_2  -> Silver
+ *   fixed_quota_3  -> Gold
  */
 
 export interface RateLimit {
@@ -19,9 +26,9 @@ export interface RateLimit {
 }
 
 export const PLAN_RATE_LIMITS: Record<string, RateLimit> = {
-  bronze: { requestsAllowed: 10, timeWindowMinutes: 1 },
-  silver: { requestsAllowed: 20, timeWindowMinutes: 1 },
-  gold: { requestsAllowed: 50, timeWindowMinutes: 1 },
+  fixed_quota: { requestsAllowed: 10, timeWindowMinutes: 1 }, // bronze
+  fixed_quota_2: { requestsAllowed: 20, timeWindowMinutes: 1 }, // Silver
+  fixed_quota_3: { requestsAllowed: 50, timeWindowMinutes: 1 }, // Gold
 };
 
-export const DEFAULT_RATE_LIMIT: RateLimit = PLAN_RATE_LIMITS.bronze;
+export const DEFAULT_RATE_LIMIT: RateLimit = PLAN_RATE_LIMITS.fixed_quota;
