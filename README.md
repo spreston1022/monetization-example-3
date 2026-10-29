@@ -10,8 +10,8 @@ two APIs and the other two plans each get exactly one.
 
 ### The APIs
 
-- **Posts API** — `GET /v1/posts` (proxies to a public demo backend)
-- **Users API** — `GET /v1/users` (proxies to a public demo backend)
+- **Shipping API** — `GET /v1/shipments` (mock data from `modules/logistics.ts`)
+- **Delivery API** — `GET /v1/deliveries` (mock data from `modules/logistics.ts`)
 
 ### How an API gets tied to a plan
 
@@ -21,10 +21,10 @@ caller's subscription, and — via the `requiredEntitlements` option — only
 lets the request through if the subscription has access to that route's
 feature:
 
-| Route         | Policy instance                | `requiredEntitlements` |
-| ------------- | ------------------------------- | ---------------------- |
-| `GET /v1/posts` | `monetization-posts-inbound` | `["posts_requests"]`   |
-| `GET /v1/users` | `monetization-users-inbound` | `["users_requests"]`   |
+| Route                | Policy instance                 | `requiredEntitlements`  |
+| -------------------- | ------------------------------- | ----------------------- |
+| `GET /v1/shipments`  | `monetization-shipping-inbound` | `["shipping_requests"]` |
+| `GET /v1/deliveries` | `monetization-delivery-inbound` | `["delivery_requests"]` |
 
 A plan gets access to an API by having the matching feature attached to it
 in the Monetization service. This is what lets `gold` bundle both APIs
@@ -63,14 +63,14 @@ values must match the code exactly — meter key, feature key, and the key
 used in the policy's `meters`/`requiredEntitlements` options all have to
 line up (see the [naming convention docs](https://zuplo.com/docs/articles/monetization/meters#naming-consistency)).
 
-1. **Meters** (Meters tab): create `posts_requests` and `users_requests`
+1. **Meters** (Meters tab): create `shipping_requests` and `delivery_requests`
    (SUM aggregation, one event per request).
-2. **Features** (Features tab): create `posts_requests` and
-   `users_requests`, each linked to the meter of the same key.
+2. **Features** (Features tab): create `shipping_requests` and
+   `delivery_requests`, each linked to the meter of the same key.
 3. **Plans** (Plans tab):
-   - `bronze` — attach the `posts_requests` feature/entitlement only.
-   - `silver` — attach the `users_requests` feature/entitlement only.
-   - `gold` — attach **both** `posts_requests` and `users_requests`.
+   - `bronze` — attach the `shipping_requests` feature/entitlement only.
+   - `silver` — attach the `delivery_requests` feature/entitlement only.
+   - `gold` — attach **both** `shipping_requests` and `delivery_requests`.
    - Set whatever usage limit/pricing you want per plan — the exact
      numbers don't matter for this example.
    - Publish each plan once configured.
@@ -97,19 +97,19 @@ Subscribe to each plan from the dev portal's pricing page, grab the
 resulting API key, then:
 
 ```bash
-# bronze: can call posts...
-curl http://localhost:9000/v1/posts -H "Authorization: Bearer BRONZE_KEY"
+# bronze: can call shipping...
+curl http://localhost:9000/v1/shipments -H "Authorization: Bearer BRONZE_KEY"
 
-# ...but not users (403 - missing 'users_requests' entitlement)
-curl http://localhost:9000/v1/users -H "Authorization: Bearer BRONZE_KEY"
+# ...but not delivery (403 - missing 'delivery_requests' entitlement)
+curl http://localhost:9000/v1/deliveries -H "Authorization: Bearer BRONZE_KEY"
 
 # silver: the reverse
-curl http://localhost:9000/v1/users -H "Authorization: Bearer SILVER_KEY"
-curl http://localhost:9000/v1/posts -H "Authorization: Bearer SILVER_KEY"
+curl http://localhost:9000/v1/deliveries -H "Authorization: Bearer SILVER_KEY"
+curl http://localhost:9000/v1/shipments -H "Authorization: Bearer SILVER_KEY"
 
 # gold: both work, with a higher shared rate limit
-curl http://localhost:9000/v1/posts -H "Authorization: Bearer GOLD_KEY"
-curl http://localhost:9000/v1/users -H "Authorization: Bearer GOLD_KEY"
+curl http://localhost:9000/v1/shipments -H "Authorization: Bearer GOLD_KEY"
+curl http://localhost:9000/v1/deliveries -H "Authorization: Bearer GOLD_KEY"
 ```
 
 Send more than a plan's rate limit within the time window to see a `429

@@ -2,52 +2,46 @@
   "openapi": "3.1.0",
   "info": {
     "version": "1.0.0",
-    "title": "Monetization Example Gateway",
-    "description": "A minimal example of a monetized API gateway built on Zuplo's Monetization feature. Three plans (bronze, silver, gold), each with its own gateway rate limit. The gold plan bundles two APIs (Posts + Users); bronze and silver each get exactly one, enforced via requiredEntitlements on the monetization policy."
+    "title": "Logistics API",
+    "description": "A minimal example of a monetized API gateway built on Zuplo's Monetization feature. Three plans (bronze, silver, gold), each with its own gateway rate limit. The gold plan bundles two APIs (Shipping + Delivery); bronze and silver each get exactly one, enforced via requiredEntitlements on the monetization policy."
   },
   "paths": {
-    "/v1/posts": {
+    "/v1/shipments": {
       "x-zuplo-path": {
         "pathMode": "open-api"
       },
       "get": {
-        "summary": "List posts",
-        "description": "Posts API. Requires the 'posts_requests' entitlement (included in the bronze and gold plans).",
-        "operationId": "list-posts",
+        "summary": "List shipments",
+        "description": "Shipping API. Requires the 'shipping_requests' entitlement (included in the bronze and gold plans).",
+        "operationId": "list-shipments",
         "x-zuplo-route": {
           "corsPolicy": "none",
           "handler": {
-            "export": "urlRewriteHandler",
-            "module": "$import(@zuplo/runtime)",
-            "options": {
-              "rewritePattern": "https://jsonplaceholder.typicode.com/posts"
-            }
+            "export": "listShipments",
+            "module": "$import(./modules/logistics)"
           },
           "policies": {
-            "inbound": ["monetization-posts-inbound", "rate-limit-by-plan-inbound"]
+            "inbound": ["monetization-shipping-inbound", "rate-limit-by-plan-inbound"]
           }
         }
       }
     },
-    "/v1/users": {
+    "/v1/deliveries": {
       "x-zuplo-path": {
         "pathMode": "open-api"
       },
       "get": {
-        "summary": "List users",
-        "description": "Users API. Requires the 'users_requests' entitlement (included in the silver and gold plans).",
-        "operationId": "list-users",
+        "summary": "List deliveries",
+        "description": "Delivery API. Requires the 'delivery_requests' entitlement (included in the silver and gold plans).",
+        "operationId": "list-deliveries",
         "x-zuplo-route": {
           "corsPolicy": "none",
           "handler": {
-            "export": "urlRewriteHandler",
-            "module": "$import(@zuplo/runtime)",
-            "options": {
-              "rewritePattern": "https://jsonplaceholder.typicode.com/users"
-            }
+            "export": "listDeliveries",
+            "module": "$import(./modules/logistics)"
           },
           "policies": {
-            "inbound": ["monetization-users-inbound", "rate-limit-by-plan-inbound"]
+            "inbound": ["monetization-delivery-inbound", "rate-limit-by-plan-inbound"]
           }
         }
       }

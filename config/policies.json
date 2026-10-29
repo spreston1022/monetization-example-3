@@ -1,7 +1,7 @@
 {
   "policies": [
     {
-      "name": "monetization-posts-inbound",
+      "name": "monetization-shipping-inbound",
       "policyType": "monetization-inbound",
       "handler": {
         "export": "MonetizationInboundPolicy",
@@ -9,14 +9,14 @@
         "options": {
           "cacheTtlSeconds": 60,
           "meters": {
-            "posts_requests": 1
+            "shipping_requests": 1
           },
-          "requiredEntitlements": ["posts_requests"]
+          "requiredEntitlements": ["shipping_requests"]
         }
       }
     },
     {
-      "name": "monetization-users-inbound",
+      "name": "monetization-delivery-inbound",
       "policyType": "monetization-inbound",
       "handler": {
         "export": "MonetizationInboundPolicy",
@@ -24,9 +24,9 @@
         "options": {
           "cacheTtlSeconds": 60,
           "meters": {
-            "users_requests": 1
+            "delivery_requests": 1
           },
-          "requiredEntitlements": ["users_requests"]
+          "requiredEntitlements": ["delivery_requests"]
         }
       }
     },
