@@ -5,6 +5,16 @@
     "title": "Logistics API",
     "description": "A minimal example of a monetized API gateway built on Zuplo's Monetization feature. Three plans (bronze, silver, gold), each with its own gateway rate limit. The gold plan bundles two APIs (Shipping + Delivery); bronze and silver each get exactly one, enforced via requiredEntitlements on the monetization policy."
   },
+  "tags": [
+    {
+      "name": "Shipping",
+      "description": "Shipments and their carrier, route and status."
+    },
+    {
+      "name": "Delivery",
+      "description": "Delivery status and proof of delivery."
+    }
+  ],
   "paths": {
     "/v1/shipments": {
       "x-zuplo-path": {
@@ -21,9 +31,15 @@
             "module": "$import(./modules/logistics)"
           },
           "policies": {
-            "inbound": ["monetization-shipping-inbound", "rate-limit-by-plan-inbound"]
+            "inbound": [
+              "monetization-shipping-inbound",
+              "rate-limit-by-plan-inbound"
+            ]
           }
-        }
+        },
+        "tags": [
+          "Shipping"
+        ]
       }
     },
     "/v1/deliveries": {
@@ -41,9 +57,15 @@
             "module": "$import(./modules/logistics)"
           },
           "policies": {
-            "inbound": ["monetization-delivery-inbound", "rate-limit-by-plan-inbound"]
+            "inbound": [
+              "monetization-delivery-inbound",
+              "rate-limit-by-plan-inbound"
+            ]
           }
-        }
+        },
+        "tags": [
+          "Delivery"
+        ]
       }
     }
   }

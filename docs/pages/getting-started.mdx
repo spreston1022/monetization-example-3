@@ -1,0 +1,59 @@
+---
+title: Getting started
+description: Subscribe to a plan, get an API key and make your first call to the Logistics API.
+---
+
+The Logistics API gives you shipment and delivery data over two REST endpoints. Every request is
+authenticated with an API key that belongs to your subscription.
+
+## 1. Choose a plan
+
+Each plan includes one or both APIs, a monthly request allowance and a per-minute rate limit.
+
+| Plan   | Shipping API | Delivery API | Requests per month | Rate limit |
+| ------ | :----------: | :----------: | ------------------ | ---------- |
+| Bronze |      ✓       |              | 1,000              | 10 / min   |
+| Silver |              |      ✓       | 1,000              | 20 / min   |
+| Gold   |      ✓       |      ✓       | 1,000 per API      | 50 / min   |
+
+See [Pricing](/pricing) for current prices. Bronze is free.
+
+## 2. Get your API key
+
+Sign in and subscribe on the [Pricing](/pricing) page. Your API key is created as soon as the
+subscription starts. You can copy, roll or delete it from **My Subscriptions** in the profile menu.
+
+## 3. Make your first call
+
+Send the key as a Bearer token:
+
+```bash
+curl https://your-gateway.zuplo.app/v1/shipments \
+  -H "Authorization: Bearer $API_KEY"
+```
+
+```json
+[
+  {
+    "id": "shp_1002",
+    "carrier": "FedEx",
+    "service": "2Day",
+    "origin": "Seattle, WA",
+    "destination": "Denver, CO",
+    "weightKg": 0.8,
+    "status": "in_transit",
+    "createdAt": "2026-10-26T18:22:00Z"
+  }
+]
+```
+
+You can also try every endpoint from the [API Reference](/api). Once you're signed in, your key is
+filled in for you.
+
+## Errors
+
+| Status | Meaning                                                                 |
+| ------ | ----------------------------------------------------------------------- |
+| `401`  | The API key is missing or invalid.                                      |
+| `403`  | Your plan doesn't include this API, or you've used up this month's allowance. Upgrade on the [Pricing](/pricing) page. |
+| `429`  | You've hit your plan's per-minute rate limit. Wait and retry.           |
