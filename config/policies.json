@@ -11,7 +11,9 @@
           "meters": {
             "shipping_requests": 1
           },
-          "requiredEntitlements": ["shipping_requests"]
+          "requiredEntitlements": [
+            "shipping_requests"
+          ]
         }
       }
     },
@@ -26,7 +28,9 @@
           "meters": {
             "delivery_requests": 1
           },
-          "requiredEntitlements": ["delivery_requests"]
+          "requiredEntitlements": [
+            "delivery_requests"
+          ]
         }
       }
     },
@@ -46,6 +50,32 @@
           }
         }
       }
+    },
+    {
+      "handler": {
+        "export": "ApiKeyInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "allowUnauthenticatedRequests": false,
+          "cacheTtlSeconds": 60
+        }
+      },
+      "name": "api-key-inbound",
+      "policyType": "api-key-inbound"
+    },
+    {
+      "handler": {
+        "export": "RateLimitInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "rateLimitBy": "ip",
+          "requestsAllowed": 2,
+          "timeWindowMinutes": 1,
+          "mode": "async"
+        }
+      },
+      "name": "rate-limit-inbound",
+      "policyType": "rate-limit-inbound"
     }
   ]
 }
