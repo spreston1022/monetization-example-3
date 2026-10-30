@@ -5,6 +5,12 @@ import {
 } from "@zuplo/runtime";
 
 /**
+ * Metered features whose monthly allowance is logged as `<key>_used` and
+ * `<key>_remaining`. Only features on the caller's plan are logged.
+ */
+const QUOTA_FEATURES = ["shipping_requests", "delivery_requests"];
+
+/**
  * Tags each request's logs with who made the call and which subscription and
  * plan it was billed against, then writes one summary line per request.
  *
@@ -28,6 +34,13 @@ export function logSubscription(
     properties.planKey = subscription.plan.key;
     properties.planName = subscription.plan.name;
     properties.planVersion = subscription.plan.version;
+
+    for (const key of QUOTA_FEATURES) {
+      const entitlement = subscription.entitlements[key];
+      if (!entitlement?.hasAccess) continue;
+      properties[`${key}_used`] = entitlement.usage;
+      properties[`${key}_remaining`] = entitlement.balance;
+    }
   }
 
   context.log.setLogProperties?.(properties);
