@@ -1,6 +1,7 @@
 import { OpenTelemetryPlugin } from "@zuplo/otel";
 import { RuntimeExtensions } from "@zuplo/runtime";
 import { McpGatewayPlugin } from "@zuplo/runtime/mcp-gateway";
+import { logSubscription } from "./subscription-logging";
 
 /**
  * `runtimeInit` runs once when your gateway boots. Use it to register plugins
@@ -24,6 +25,11 @@ export function runtimeInit(runtime: RuntimeExtensions) {
   //
   // Remove this plugin if you are not using OpenTelemetry tracing.
   runtime.addPlugin(new OpenTelemetryPlugin());
+
+  // --- Subscription logging ------------------------------------------------
+  // Adds the caller's `sub` and their subscription and plan to the logs of
+  // every request. See modules/subscription-logging.ts.
+  runtime.addResponseSendingFinalHook(logSubscription);
 
   // --- Logging (optional) --------------------------------------------------
   // Ship request logs to Datadog. Other log integrations (New Relic, Splunk,
